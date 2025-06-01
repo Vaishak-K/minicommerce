@@ -1,103 +1,195 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+
+const Products = [
+  {
+    id: "101",
+    title: "Wireless Headphones",
+    description: "High-quality sound with noise cancellation.",
+    price: 149.99,
+    variants: ["Black", "White", "Silver"],
+    image:
+      "https://m.media-amazon.com/images/I/31QB73-5IEL._SX300_SY300_QL70_FMwebp_.jpg",
+  },
+  {
+    id: "102",
+    title: "Smart Fitness Watch",
+    description: "Track your fitness goals and heart rate accurately.",
+    price: 89.99,
+    variants: ["Black", "Pink", "Navy Blue"],
+    image:
+      "https://m.media-amazon.com/images/I/41EcnbfGJiL._SX300_SY300_QL70_FMwebp_.jpg",
+  },
+  {
+    id: "103",
+    title: "Bluetooth Speaker",
+    description: "Portable speaker with deep bass and clear audio.",
+    price: 59.99,
+    variants: ["Red", "Blue", "Camo"],
+    image:
+      "https://m.media-amazon.com/images/I/51vpv2AS-WL._SX300_SY300_QL70_FMwebp_.jpg",
+  },
+  {
+    id: "104",
+    title: "4K Action Camera",
+    description: "Capture your adventures in stunning 4K quality.",
+    price: 129.99,
+    variants: ["Black", "Yellow", "Orange"],
+    image:
+      "https://m.media-amazon.com/images/I/314bYOvfzqL._SX300_SY300_QL70_FMwebp_.jpg",
+  },
+  {
+    id: "105",
+    title: "Electric Toothbrush",
+    description: "Keep your teeth clean with sonic vibrations.",
+    price: 39.99,
+    variants: ["White", "Blue", "Mint"],
+    image:
+      "https://m.media-amazon.com/images/I/41gnxkh812L._SX300_SY300_QL70_FMwebp_.jpg",
+  },
+  {
+    id: "106",
+    title: "Gaming Mouse",
+    description: "Precision and comfort for competitive gaming.",
+    price: 49.99,
+    variants: ["RGB Black", "Matte Black", "Glossy White"],
+    image:
+      "https://m.media-amazon.com/images/I/3183YJQkCoL._SX300_SY300_QL70_FMwebp_.jpg",
+  },
+  {
+    id: "107",
+    title: "LED Desk Lamp",
+    description: "Brighten up your workspace with touch controls.",
+    price: 24.99,
+    variants: ["White", "Black", "Wood Finish"],
+    image: "https://m.media-amazon.com/images/I/515GbYKACyL._SX679_.jpg",
+  },
+  {
+    id: "108",
+    title: "Laptop Backpack",
+    description: "Water-resistant backpack with USB charging port.",
+    price: 69.99,
+    variants: ["Gray", "Navy", "Green"],
+    image: "https://m.media-amazon.com/images/I/81Yjmayg+ZL._SY879_.jpg",
+  },
+  {
+    id: "109",
+    title: "Wireless Charger Pad",
+    description: "Fast charging pad for all Qi-enabled devices.",
+    price: 29.99,
+    variants: ["Black", "White", "Rose Gold"],
+    image:
+      "https://m.media-amazon.com/images/I/41YxAMPl7eL._SX300_SY300_QL70_FMwebp_.jpg",
+  },
+];
+
+export default function LandingPage() {
+  const router = useRouter();
+  const [selections, setSelections] = useState(() =>
+    Products.reduce(
+      (acc, p) => {
+        acc[p.id] = {
+          variant: p.variants[0],
+          quantity: 1,
+        };
+        return acc;
+      },
+      {} as Record<string, { variant: string; quantity: number }>
+    )
+  );
+
+  const handleBuyNow = (product: any) => {
+    const selected = selections[product.id];
+    sessionStorage.setItem(
+      "selectedProduct",
+      JSON.stringify({
+        ...product,
+        variant: selected.variant,
+        quantity: selected.quantity,
+      })
+    );
+    router.push("/checkout");
+  };
+
+  const updateSelection = (
+    id: string,
+    key: "variant" | "quantity",
+    value: string | number
+  ) => {
+    setSelections((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        [key]: key === "quantity" ? Number(value) : value,
+      },
+    }));
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="min-h-screen bg-gray-100 py-10 px-4">
+      <h1 className="text-3xl font-bold text-center mb-10">
+        Shop Our Products
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+        {Products.map((product) => (
+          <div
+            key={product.id}
+            className="bg-white p-4 rounded-lg shadow hover:shadow-md transition"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+            <img
+              src={product.image}
+              alt={product.title}
+              className="w-full h-48 object-contain mb-4"
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+            <h2 className="text-xl font-semibold">{product.title}</h2>
+            <p className="text-gray-600 text-sm">{product.description}</p>
+            <p className="text-lg font-bold text-indigo-600 mt-2">
+              ${product.price.toFixed(2)}
+            </p>
+
+            <div className="mt-4">
+              <label className="block text-sm mb-1 text-gray-700">
+                Variant
+              </label>
+              <select
+                className="w-full border rounded p-2"
+                value={selections[product.id].variant}
+                onChange={(e) =>
+                  updateSelection(product.id, "variant", e.target.value)
+                }
+              >
+                {product.variants.map((v) => (
+                  <option key={v}>{v}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mt-2">
+              <label className="block text-sm mb-1 text-gray-700">
+                Quantity
+              </label>
+              <input
+                type="number"
+                min="1"
+                className="w-full border rounded p-2"
+                value={selections[product.id].quantity}
+                onChange={(e) =>
+                  updateSelection(product.id, "quantity", e.target.value)
+                }
+              />
+            </div>
+
+            <button
+              onClick={() => handleBuyNow(product)}
+              className="mt-4 w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700"
+            >
+              Buy Now
+            </button>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
