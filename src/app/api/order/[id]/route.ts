@@ -3,12 +3,14 @@ import { NextResponse, type NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  context: { params: Promise<{ id: string }> } // note: params is a Promise now
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await context.params;
-
   try {
-    const order = await prisma.order.findUnique({ where: { id } });
+    const { id } = await context.params;
+
+    const order = await prisma.order.findUnique({
+      where: { id },
+    });
 
     if (!order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });

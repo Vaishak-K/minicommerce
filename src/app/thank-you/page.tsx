@@ -1,9 +1,9 @@
 "use client";
 
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
-export default function ThankYouPage() {
+function ThankYouContent() {
   const params = useSearchParams();
   const orderId = params.get("orderId");
   const [order, setOrder] = useState<any>(null);
@@ -23,7 +23,11 @@ export default function ThankYouPage() {
     <div className="max-w-3xl mx-auto p-6 bg-white rounded shadow mt-8">
       <h1 className="text-3xl font-bold mb-6">Thank You for Your Order!</h1>
       <p
-        className={`${order.transactionOutcome === "approved" ? "text-green-700" : "text-red-700"} font-semibold`}
+        className={`${
+          order.transactionOutcome === "approved"
+            ? "text-green-700"
+            : "text-red-700"
+        } font-semibold`}
       >
         {order.transactionOutcome === "approved"
           ? "Your payment was successful. A confirmation email has been sent."
@@ -68,5 +72,13 @@ export default function ThankYouPage() {
         </li>
       </ul>
     </div>
+  );
+}
+
+export default function ThankYouPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-center">Loading...</div>}>
+      <ThankYouContent />
+    </Suspense>
   );
 }
